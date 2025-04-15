@@ -24,17 +24,44 @@ import { winstonConfig } from './logger/winston.config';
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        dialect: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: +configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USER'),
-        password: configService.get<string>('DB_PASS'),
-        database: configService.get<string>('DB_NAME'),
-        autoLoadModels: true,
-        synchronize: false,
-        models: [User, Portfolio, Image, Comment],
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const databaseUrl = configService.get<string>('DATABASE_URL');
+
+        if (databaseUrl) {
+          // Heroku mode
+          const parsed = new URL(databaseUrl);
+          return {
+            dialect: 'postgres',
+            host: parsed.hostname,
+            port: +parsed.port,
+            username: parsed.username,
+            password: parsed.password,
+            database: parsed.pathname.slice(1),
+            dialectOptions: {
+              ssl: {
+                require: true,
+                rejectUnauthorized: false,
+              },
+            },
+            autoLoadModels: true,
+            synchronize: false,
+            models: [User, Portfolio, Image, Comment],
+          };
+        }
+
+        // Local mode
+        return {
+          dialect: 'postgres',
+          host: configService.get<string>('DB_HOST'),
+          port: +configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USER'),
+          password: configService.get<string>('DB_PASS'),
+          database: configService.get<string>('DB_NAME'),
+          autoLoadModels: true,
+          synchronize: false,
+          models: [User, Portfolio, Image, Comment],
+        };
+      },
     }),
 
     ThrottlerModule.forRoot({
