@@ -65,7 +65,6 @@ export class ImagesService {
       const image = await this.imageModel.findByPk(imageId, {
         include: [Portfolio],
         transaction,
-        lock: true,
       });
 
       if (!image) {
