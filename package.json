@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migrate": "sequelize-cli db:migrate --config config/config.cjs",
+    "migrate": "npx sequelize-cli db:migrate --config config/config.cjs",
     "undo": "sequelize-cli db:migrate:undo:all --config config/config.cjs",
     "heroku-postbuild": "npm run build"
   },
