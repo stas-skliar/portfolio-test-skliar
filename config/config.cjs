@@ -16,6 +16,7 @@ if (process.env.DATABASE_URL) {
       database: dbUrl.pathname.slice(1),
       host: dbUrl.hostname,
       port: dbUrl.port,
+      dialect: 'postgres',
       dialectOptions: {
         ssl: {
           require: true,
@@ -33,6 +34,7 @@ if (process.env.DATABASE_URL) {
       database: process.env.DB_NAME,
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
+      dialect: 'postgres',
     },
   };
 }
